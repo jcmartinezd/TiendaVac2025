@@ -16,3 +16,20 @@ CREATE TABLE Ventas(
     fecha date not null,
     foreign key (producto_id) references Productos(id)
 );
+
+INSERT INTO Productos (nombre, tipo, cantidad_actual, cantidad_minima, precio_base)
+    VALUES 
+        ('Lapiz', 'papeleria', 100, 5, 2.50),
+        ('Leche', 'supermercado',50,10, 2.00),
+        ('Arroz', 'supermercado',50,20, 3.50),
+        ('Agua', 'drogueria',40,10, 1.7),
+        ('Suero','drogueria',80,5, 4.50);
+        
+        
+INSERT INTO Ventas (producto_id, cantidad, fecha)
+    VALUES
+        (1, 10, '2025-01-01'),
+        (2, 3, '2025-01-12'),
+        (4, 5, '2025-01-06'),
+        (5,2,"")
+        
