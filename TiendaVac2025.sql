@@ -51,3 +51,43 @@ SELECT
     END AS precio_final    
 FROM
     Productos p;
+
+-- 2. Vender un producto
+DELIMITER $$
+CREATE PROCEDURE vender_producto(
+    producto_id INT,
+    cantidad INT
+)
+BEGIN
+    DECLARE precio_final DECIMAL(10,2);
+    DECLARE stock_actual INT;
+
+    SELECT cantidad_actual INTO stock_actual
+    FROM Productos
+    WHERE id = producto_id;
+
+    IF stock_actual >= cantidad THEN
+        UPDATE Productos
+        SET cantidad_actual = cantidad_actual - cantidad
+        WHERE id = producto_id;
+
+        SELECT 
+            CASE
+                WHEN tipo = 'papeleria' THEN precio_base*1.16
+                WHEN tipo = 'drogueria' THEN precio_base*1.12
+                WHEN tipo = 'supermercado' THEN precio_base*1.04
+            END INTO precio_final
+        FROM
+            Productos
+        WHERE
+            id = producto_id;
+
+        INSERT INTO Ventas (producto_id, cantidad, fecha)
+        VALUES (producto_id, cantidad, CURDATE());
+        
+        SELECT CONCAT('Venta realizada. Total de:', precio_final*cantidad) AS Mensaje;
+    ELSE
+        SELECT 'No hay suficiente stock.' AS Mensaje;
+    END IF;      
+END$$
+DELIMITER ;
