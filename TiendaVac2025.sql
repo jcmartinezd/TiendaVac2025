@@ -20,10 +20,10 @@ CREATE TABLE Ventas(
 INSERT INTO Productos (nombre, tipo, cantidad_actual, cantidad_minima, precio_base)
     VALUES 
         ('Lapiz', 'papeleria', 100, 5, 2.50),
-        ('Leche', 'supermercado',50,10, 2.00),
-        ('Arroz', 'supermercado',50,20, 3.50),
-        ('Agua', 'drogueria',40,10, 1.7),
-        ('Suero','drogueria',80,5, 4.50);
+        ('Leche', 'supermercado', 50, 10, 2.00),
+        ('Arroz', 'supermercado', 50, 20, 3.50),
+        ('Agua', 'drogueria', 40, 10, 1.7),
+        ('Suero', 'drogueria', 80, 5, 4.50);
         
         
 INSERT INTO Ventas (producto_id, cantidad, fecha)
@@ -31,5 +31,23 @@ INSERT INTO Ventas (producto_id, cantidad, fecha)
         (1, 10, '2025-01-01'),
         (2, 3, '2025-01-12'),
         (4, 5, '2025-01-06'),
-        (5,2,"")
-        
+        (5, 2, '2025-01-03'),
+        (3, 4, '2025-01-07');        
+
+-- 1. Visualizar la información de los productos
+
+CREATE VIEW vista_productos AS
+SELECT 
+    p.id,
+    p.nombre,
+    p.tipo,
+    p.cantidad_actual,
+    p.cantidad_minima,
+    p.precio_base,
+    CASE 
+        WHEN p.tipo = 'papeleria' THEN p.precio_base * 1.16
+        WHEN p.tipo = 'drogueria' THEN p.precio_base * 1.12
+        WHEN p.tipo = 'supermercado' THEN p.precio_base * 1.04
+    END AS precio_final    
+FROM
+    Productos p;
