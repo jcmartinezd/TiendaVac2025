@@ -109,3 +109,67 @@ BEGIN
     WHERE id = producto_id;
 END$$
 DELIMITER ;
+
+-- 4. Cambiar un producto de la tienda   
+
+DELIMITER $$
+CREATE PROCEDURE cambiar_producto(
+    producto_id INT,
+    nuevo_nombre VARCHAR(50),
+    nuevo_tipo ENUM('papeleria','supermercado','drogueria'),
+    nuevo_precio_base DECIMAL(10,2)
+)
+
+BEGIN   
+    DECLARE existe_nombre BOOLEAN;
+
+    SELECT COUNT(*) > 0 INTO existe_nombre
+    FROM Productos
+    WHERE nombre = nuevo_nombre AND id <> product_id;
+
+    IF NOT existe_nombre THEN
+        UPDATE Productos
+        SET nombre = nuevo_nombre,
+            tipo = nuevo_tipo,
+            precio_base = nuevo_precio_base
+        WHERE id = producto_id;
+
+        SELECT CONCAT('Producto cambiado correctamente.') AS Mensaje;
+        
+    ELSE
+        SELECT 'El nombre del producto ya existe.' AS Mensaje;
+        
+    END IF;
+END$$
+DELIMITER ;
+
+-- 5. Calcular estadísticas de ventas:
+
+CREATE VIEW vista_estadisticas AS
+SELECT 
+    (
+        SELECT p.nombre
+        FROM Productos p  
+        INNER JOIN Ventas v ON p.id = v.producto_id
+        GROUP BY p.id
+        ORDER BY SUM(v.cantidad) DESC -- ASC
+        LIMIT 1
+    ) AS producto_mas_vendido,
+    (
+        SELECT p.nombre
+        FROM Productos p  
+        INNER JOIN Ventas v ON p.id = v.producto_id
+        GROUP BY p.id
+        ORDER BY SUM(v.cantidad) ASC -- ASC
+        LIMIT 1
+    ) AS producto_menos_vendido,
+    (
+        SELECT sum(v.cantidad) as cantidad_total
+        FROM ventas v;
+
+    ) AS total_ventas,
+    (
+        SELECT (sum(v.cantidad))/(sum(v.cantidad*p.precio_base)) as promedio
+        FROM Productos p  
+        INNER JOIN Ventas v ON p.id = v.producto_id
+    ) AS promedio_ventas;
