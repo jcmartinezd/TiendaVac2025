@@ -91,3 +91,21 @@ BEGIN
     END IF;      
 END$$
 DELIMITER ;
+
+-- 3. Abastecer la tienda con un producto
+
+DELIMITER $$
+CREATE PROCEDURE abastecer_producto(
+    producto_id INT,
+    cantidad INT
+)
+BEGIN
+    UPDATE Productos
+    SET cantidad_actual = cantidad_actual + cantidad
+    WHERE id = producto_id;
+
+    SELECT CONCAT('Se ha abastecido, cantidad actual:', cantidad_actual,'unidades del producto.', nombre) AS Mensaje;
+    FROM Productos
+    WHERE id = producto_id;
+END$$
+DELIMITER ;
