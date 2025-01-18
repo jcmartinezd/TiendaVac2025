@@ -34,6 +34,8 @@ INSERT INTO Ventas (producto_id, cantidad, fecha)
         (5, 2, '2025-01-03'),
         (3, 4, '2025-01-07');        
 
+SELECT * FROM productos;
+SELECT * FROM ventas;
 -- 1. Visualizar la información de los productos
 
 CREATE VIEW vista_productos AS
@@ -92,6 +94,8 @@ BEGIN
 END$$
 DELIMITER ;
 
+CALL vender_producto (1,1);
+
 -- 3. Abastecer la tienda con un producto
 
 DELIMITER $$
@@ -104,11 +108,13 @@ BEGIN
     SET cantidad_actual = cantidad_actual + cantidad
     WHERE id = producto_id;
 
-    SELECT CONCAT('Se ha abastecido, cantidad actual:', cantidad_actual,'unidades del producto.', nombre) AS Mensaje;
+    SELECT CONCAT('Se ha abastecido, cantidad actual:', cantidad_actual,'unidades del producto.', nombre) AS Mensaje
     FROM Productos
     WHERE id = producto_id;
 END$$
 DELIMITER ;
+
+CALL abastecer_producto(1,1);
 
 -- 4. Cambiar un producto de la tienda   
 
@@ -152,7 +158,7 @@ SELECT
         FROM Productos p  
         INNER JOIN Ventas v ON p.id = v.producto_id
         GROUP BY p.id
-        ORDER BY SUM(v.cantidad) DESC -- ASC
+        ORDER BY sum(v.cantidad) DESC -- ASC
         LIMIT 1
     ) AS producto_mas_vendido,
     (
@@ -160,7 +166,7 @@ SELECT
         FROM Productos p  
         INNER JOIN Ventas v ON p.id = v.producto_id
         GROUP BY p.id
-        ORDER BY SUM(v.cantidad) ASC -- ASC
+        ORDER BY sum(v.cantidad) ASC -- ASC
         LIMIT 1
     ) AS producto_menos_vendido,
     (
@@ -174,7 +180,14 @@ SELECT
         INNER JOIN Ventas v ON p.id = v.producto_id
     ) AS total_ventas,
     (
-        SELECT (sum(v.cantidad))/(sum(v.cantidad*p.precio_base))
+        SELECT SUM(p.precio_base*
+            CASE
+                WHEN p.tipo= 'papeleria' THEN 1.16
+                WHEN p.tipo= 'drogueria' THEN 1.12
+                WHEN p.tipo= 'supermercado' THEN 1.04
+            END) / sum(v.cantidad)
         FROM Productos p  
         INNER JOIN Ventas v ON p.id = v.producto_id
     ) AS promedio_ventas;
+    
+    select * from vista_estadisticas;
