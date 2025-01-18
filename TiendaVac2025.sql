@@ -191,3 +191,20 @@ SELECT
     ) AS promedio_ventas;
     
     select * from vista_estadisticas;
+
+DELIMITER $$
+CREATE PROCEDURE menu()
+BEGIN
+    DECLARE opcion INT; -- C++ int opcion
+
+    SELECT '
+    ======= MENÚ PRINCIPAL ===== 
+    1. Visualizar la información de los productos
+    2. Vender un producto.
+    3. Abastecer la tienda con un producto.
+    4. Cambiar un producto.
+    5. Estadisticas de ventas.
+    6. salir
+    '
+END$$
+DELIMITER ;
