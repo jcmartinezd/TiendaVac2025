@@ -174,7 +174,7 @@ SELECT
         INNER JOIN Ventas v ON p.id = v.producto_id
     ) AS total_ventas,
     (
-        SELECT (sum(v.cantidad))/(sum(v.cantidad*p.precio_base)) as promedio
+        SELECT (sum(v.cantidad))/(sum(v.cantidad*p.precio_base))
         FROM Productos p  
         INNER JOIN Ventas v ON p.id = v.producto_id
     ) AS promedio_ventas;
