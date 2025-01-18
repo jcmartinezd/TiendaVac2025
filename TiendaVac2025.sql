@@ -165,7 +165,8 @@ SELECT
     ) AS producto_menos_vendido,
     (
         SELECT sum(v.cantidad) as cantidad_total
-        FROM ventas v;
+        FROM ventas v
+        where v.producto_id;
 
     ) AS total_ventas,
     (
