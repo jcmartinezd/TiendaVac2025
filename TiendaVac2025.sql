@@ -164,10 +164,14 @@ SELECT
         LIMIT 1
     ) AS producto_menos_vendido,
     (
-        SELECT sum(v.cantidad) as cantidad_total
-        FROM ventas v
-        where v.producto_id;
-
+        SELECT sum(p.precio_base * v.cantidad * 
+            CASE
+                WHEN p.tipo= 'papeleria' THEN 1.16
+                WHEN p.tipo= 'drogueria' THEN 1.12
+                WHEN p.tipo= 'supermercado' THEN 1.04
+            END) 
+        FROM Productos p  
+        INNER JOIN Ventas v ON p.id = v.producto_id
     ) AS total_ventas,
     (
         SELECT (sum(v.cantidad))/(sum(v.cantidad*p.precio_base)) as promedio
