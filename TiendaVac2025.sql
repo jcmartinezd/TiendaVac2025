@@ -191,7 +191,7 @@ SELECT
     ) AS promedio_ventas;
     
     select * from vista_estadisticas;
-
+    
 DELIMITER $$
 CREATE PROCEDURE menu()
 BEGIN
@@ -204,7 +204,42 @@ BEGIN
     3. Abastecer la tienda con un producto.
     4. Cambiar un producto.
     5. Estadisticas de ventas.
-    6. salir
-    '
+    0. Salir' INTO @menu;
+
+    -- Asignar la opción directamente para probar 
+
+    SET opcion = 4; -- Cambiar esto por la opción deseada
+    AppMenuLoop: LOOP
+    CASE opcion
+        WHEN 1 THEN
+            SELECT * FROM vista_productos;
+        WHEN 2 THEN
+            -- Valores de prueba para los parámetros del procedimiento de ventas
+            SET @producto_id = 1;
+            SET @cantidad = 3;
+            CALL vender_producto(@producto_id, @cantidad);
+        WHEN 3 THEN
+        -- Valores de prueba para los parámetros del procedimiento de abastecer
+            SET @producto_id = 1;
+            SET @cantidad = 1;
+            CALL abastecer_producto(@producto_id, @cantidad);
+        WHEN 4 THEN
+        -- Valores de prueba para los parámetros del procedimiento de cambiar
+            SET @producto_id = 2; 
+            SET @nuevo_nombre = 'Ibuprofeno';
+            SET @nuevo_tipo = 'drogueria';
+            SET @nuevo_precio_base = 4.50;
+            CALL cambiar_producto(@producto_id, @nuevo_nombre, @nuevo_tipo, @nuevo_precio_base);
+        WHEN 5 THEN
+            SELECT * FROM vista_estadisticas;
+        WHEN 0 THEN
+            LEAVE AppMenuLoop;
+        ELSE
+            SELECT 'Opción no válida.';
+    END CASE;
+    SET opcion=0;
+    END LOOP AppMenuLoop;                       
 END$$
 DELIMITER ;
+
+call menu;
